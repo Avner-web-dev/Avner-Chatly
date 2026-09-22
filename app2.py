@@ -26,7 +26,7 @@ def login_page():
         elif password=="":
             st.warning("Fill in the password")
         else:
-            file=open("Data_base.txt")
+            file=open("Data_Base.txt")
             data=file.readlines()
             flag=0
             for i in data:
