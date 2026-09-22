@@ -26,7 +26,7 @@ def login_page():
         elif password=="":
             st.warning("Fill in the password")
         else:
-            file=open("C:/Users/mjkal/OneDrive/Documents/streamlit/chatting_app/Data_base.txt")
+            file=open("Data_base.txt")
             data=file.readlines()
             flag=0
             for i in data:
