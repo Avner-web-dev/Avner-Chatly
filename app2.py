@@ -164,6 +164,7 @@ def send_message_callback():
  
 def chat_window():
     recipient = st.session_state.selected_user
+    user=recipient
     current_user = st.session_state.username
     
     # Header
