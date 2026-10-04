@@ -298,6 +298,17 @@ def settings():
     if st.button("🛅 Save settings",type="primary"):
         st.session_state.username=username
         st.success("Settings saved ✅ successfully")
+def verify_login(username,password):
+    try:
+        response=supabase.table("users").select("*").eq("username",username).eq("password",password).execute()
+        return len(response.data)>0
+    except Exception as e:
+        st.error(f"Login check failed {e}")
+        return False
+def register_user(username,password):
+    try:
+        check=supabase.table("users").select("*").eq("username",username).execute()
+        return False,"Username already exist, please do a diffrent one."
 #--------main code--------
 if st.session_state.logged_in==False:
     login_page()
