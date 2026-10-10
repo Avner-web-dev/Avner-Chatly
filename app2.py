@@ -352,7 +352,7 @@ def get_all_users():
     #print all registered usernames
     try:
         response=supabase.table("users").select("username").execute()
-        return [user["username"] for in user in response.data]
+        return [user["username"] for user in response.data]
     except:
         st.error("Falied to fetch the users")
         return []
