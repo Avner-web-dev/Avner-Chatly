@@ -29,8 +29,9 @@ def login_page():
     # ---------------- LOGIN TAB ----------------
     with tab_login:
         with st.form("login_form"):
-            login_user = st.text_input("Username").strip()
-            login_pass = st.text_input("Password", type="password").strip()
+            # Added unique keys here 👇
+            login_user = st.text_input("Username", key="login_username_input").strip()
+            login_pass = st.text_input("Password", type="password", key="login_password_input").strip()
             submit_login = st.form_submit_button("Log In", use_container_width=True)
             
             if submit_login:
@@ -47,10 +48,12 @@ def login_page():
     # ---------------- SIGN UP TAB ----------------
     with tab_signup:
         with st.form("signup_form"):
-            new_user = st.text_input("Choose Username").strip()
-            new_pass = st.text_input("Choose Password", type="password").strip()
-            confirm_pass = st.text_input("Confirm Password", type="password").strip()
-            submit_signup = st.form_submit_button("Create Account", use_container_width=True)            
+            # Added unique keys here 👇
+            new_user = st.text_input("Choose Username", key="signup_username_input").strip()
+            new_pass = st.text_input("Choose Password", type="password", key="signup_password_input").strip()
+            confirm_pass = st.text_input("Confirm Password", type="password", key="signup_confirm_password_input").strip()
+            submit_signup = st.form_submit_button("Create Account", use_container_width=True)
+            
             if submit_signup:
                 if not new_user or not new_pass:
                     st.warning("Please fill in all fields.")
