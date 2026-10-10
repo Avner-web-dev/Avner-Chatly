@@ -73,6 +73,25 @@ if "username" not in st.session_state:
     st.session_state.username=""
 if "selected_user" not in st.session_state:
     st.session_state.selected_user="Avner"
+if not st.session_state.logged_in:
+    login_page()
+else:
+    st.sidebar.title("Chats")
+    all_users=get_all_users()
+    other_users=[u in all_users if u != st.session_state.username]
+    if other_users:
+        selected=st.sidebar.radio("Selected user to chat with",other_users)
+        st.session_state.selected_user=selected
+    else:
+        st.sidebar.info("No other registered user found")
+    if st.sidebar.button("Log out",user_container_width=True):
+        st.session_state.logged_in=False
+        st.session_state.username=""
+        st.rerun()
+    if st.session_state.user:
+        chat_window()
+    else:
+        st.info("Select a sidebar to start messaging")
 if "messages" not in st.session_state:
     st.session_state.messages={
         "Aarav": [
