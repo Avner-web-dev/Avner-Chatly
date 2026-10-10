@@ -78,7 +78,7 @@ if not st.session_state.logged_in:
 else:
     st.sidebar.title("Chats")
     all_users=get_all_users()
-    other_users=[u in all_users if u != st.session_state.username]
+    other_users=[u for u in all_users if u != st.session_state.username]
     if other_users:
         selected=st.sidebar.radio("Selected user to chat with",other_users)
         st.session_state.selected_user=selected
