@@ -21,33 +21,47 @@ load_css()
 #----------login ui----------
 #display the login heading
 def login_page():
-    st.markdown('<h1>Login</h1>',unsafe_allow_html=True)
-    #display a description message
-    st.markdown('<div class="login-description">'
-                'Please enter your login details'
-                '</div>',unsafe_allow_html=True)
-    username=st.text_input("Username",placeholder="Enter your username")
-    password=st.text_input("Password",placeholder="Enter your password",type="password")
-    if st.button("Submit"):
-        if username=="":
-            st.warning("Fill in the username")
-        elif password=="":
-            st.warning("Fill in the password")
-        else:
-            file=open("Data_Base.txt")
-            data=file.readlines()
-            flag=0
-            for i in data:
-                u,p=i.strip().split(",")
-                if username==u and password==p:
-                    flag=1
-                    st.success("Login successful")
-                    st.session_state.logged_in=True
-                    st.session_state.username=username
+    st.markdown("<h2 style='text-align: center;'>Welcome to Chatly 💬</h2>", unsafe_allow_html=True)
+    
+    # Tabbed view for Login vs Sign Up
+    tab_login, tab_signup = st.tabs(["🔑 Login", "📝 Sign Up"])
+    
+    # ---------------- LOGIN TAB ----------------
+    with tab_login:
+        with st.form("login_form"):
+            login_user = st.text_input("Username").strip()
+            login_pass = st.text_input("Password", type="password").strip()
+            submit_login = st.form_submit_button("Log In", use_container_width=True)
+            
+            if submit_login:
+                if not login_user or not login_pass:
+                    st.warning("Please enter both username and password.")
+                elif verify_login(login_user, login_pass):
+                    st.session_state.logged_in = True
+                    st.session_state.username = login_user
+                    st.success("Logged in successfully!")
                     st.rerun()
-                    break
-            if flag==0:
-                st.warning("Username or password does not exsits")
+                else:
+                    st.error("Invalid username or password.")
+ 
+    # ---------------- SIGN UP TAB ----------------
+    with tab_signup:
+        with st.form("signup_form"):
+            new_user = st.text_input("Choose Username").strip()
+            new_pass = st.text_input("Choose Password", type="password").strip()
+            confirm_pass = st.text_input("Confirm Password", type="password").strip()
+            submit_signup = st.form_submit_button("Create Account", use_container_width=True)            
+            if submit_signup:
+                if not new_user or not new_pass:
+                    st.warning("Please fill in all fields.")
+                elif new_pass != confirm_pass:
+                    st.error("Passwords do not match.")
+                else:
+                    success, msg = register_user(new_user, new_pass)
+                    if success:
+                        st.success(msg)
+                    else:
+                        st.error(msg)
 #----------session state----------
 if "message_input" not in st.session_state:
     st.session_state.message_input=""
@@ -308,7 +322,21 @@ def verify_login(username,password):
 def register_user(username,password):
     try:
         check=supabase.table("users").select("*").eq("username",username).execute()
-        return False,"Username already exist, please do a diffrent one."
+        if len(check.data)>0:
+            return False,"Username already exist, please do a diffrent one."
+        #insert new user
+        supabase.table("users").insert({"username":username,"password",password}).execute()
+        return True,"Account created successfully"
+    except:
+        return False,'Sign up falied'
+def get_all_users():
+    #print all registered usernames
+    try:
+        response=supabase.table("users").select("username").execute()
+        return [user["username"] for in user in response.data]
+    except:
+        st.error("Falied to fetch the users")
+        return []
 #--------main code--------
 if st.session_state.logged_in==False:
     login_page()
