@@ -344,7 +344,7 @@ def register_user(username,password):
         if len(check.data)>0:
             return False,"Username already exist, please do a diffrent one."
         #insert new user
-        supabase.table("users").insert({"username":username,"password",password}).execute()
+        supabase.table("users").insert({"username":username,"password":password}).execute()
         return True,"Account created successfully"
     except:
         return False,'Sign up falied'
