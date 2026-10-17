@@ -50,13 +50,17 @@ def register_user(username, password):
 
             return False, "Username already exists, please choose a different one."
 
+        # Insert new user
+
         supabase.table("users").insert({"username": username, "password": password}).execute()
 
         return True, "Account created successfully"
 
-    except Exception:
+    except Exception as e:
 
-        return False, "Sign up failed"
+        # This will show us the exact reason why it failed
+
+        return False, f"Sign up failed: {e}"
  
 def get_all_users():
 
