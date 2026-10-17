@@ -297,7 +297,7 @@ def chat_list():
  
 def chat_window():
     from streamlit_autorefresh import st_autorefresh
-    st_autorefresh(internal=3000,limit=None,key="chat_autorefresh")
+    st_autorefresh(interval=3000,limit=None,key="chat_autorefresh")
     recipient = st.session_state.selected_user
 
     current_user = st.session_state.username
