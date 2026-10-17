@@ -285,7 +285,7 @@ def chat_list():
 
         with col2:
 
-                        st.markdown(f'<b>{escape(name)}</b><br><small style="color:#cbd5e1;">Online</small>', unsafe_allow_html=True)
+            st.markdown(f'<b>{escape(name)}</b><br><small style="color:#cbd5e1;">Online</small>', unsafe_allow_html=True)
  
 
         with col3:
