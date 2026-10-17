@@ -180,3 +180,12 @@ margin:auto;
 font-size:25px;
 margin-bottom:10px;
 }
+/* Fix sidebar radio button text visibility */
+
+[data-testid="stSidebar"] .stRadio label p, 
+
+[data-testid="stSidebar"] div[role="radiogroup"] label span {
+
+    color: #111b21 !important;
+
+}
