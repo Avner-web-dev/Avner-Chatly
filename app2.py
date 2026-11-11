@@ -263,19 +263,27 @@ def chat_list():
 
     st.markdown('<div class="chatlist-header">Chats</div>', unsafe_allow_html=True)
 
-    search = st.text_input("Search", placeholder="Search chats...", label_visibility="collapsed")
+    search = st.text_input("Search", placeholder="Search friends...", label_visibility="collapsed")
 
     st.write("")
 
-    all_users = get_all_users()
+    # Only show accepted friends
 
-    other_users = [u for u in all_users if u != st.session_state.username]
+    my_friends = get_friends_list(st.session_state.username)
 
-    for name in other_users:
+    if not my_friends:
+
+        st.info("No friends added yet. Go to 'Contacts' to send friend requests!")
+
+        return
+ 
+    for name in my_friends:
 
         if search and search.lower() not in name.lower():
 
             continue
+
+        status, color = check_user_status(name)
 
         col1, col2, col3 = st.columns([1, 3, 1.5], vertical_alignment="center")
 
@@ -285,8 +293,7 @@ def chat_list():
 
         with col2:
 
-            st.markdown(f'<b>{escape(name)}</b><br><small style="color:#cbd5e1;">Online</small>', unsafe_allow_html=True)
- 
+            st.markdown(f'<b>{escape(name)}</b><br><small style="color:{color};">● {status}</small>', unsafe_allow_html=True)
 
         with col3:
 
