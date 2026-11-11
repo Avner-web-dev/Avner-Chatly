@@ -25,7 +25,56 @@ supabase = init_supabase()
 st.set_page_config(page_title="Chatly", layout="centered")
  
 #---------- SUPABASE HELPER FUNCTIONS (Placed at the top) ----------
- 
+def send_friend_requests(sender,receiver):
+    try:
+        supabase.table("friend_requests").insert({
+            "sender":sender,
+            "receiver":receiver,
+            "status":"pending"
+            }).execute()
+        return True,"Friend request sent"
+    except Exception as e:
+        return False,f"Failed to send request {e}"
+def responded_to_friend_request(request_id,new_status):
+    try:
+        supabase.table("friend_requests").update({
+            "status":new_status
+            }).eq("id",request_id).execute()
+        return True
+    except Exception:
+        return False
+def get_pending_request(username):
+    try:
+        response=supabase.table("friend_requests").select("*").eq("receiver",username).eq("status","pending").execute()
+        return response.data
+    except Exception as e:
+        return []
+def get_friend_list(username):
+    try:
+        response1=supabase.table("friend_request").select("receiver").eq("sender",username).eq("status","accepted").execute()
+        response2=supabase.table("friend_request").select("sender").eq("receiver",username).eq("status","accepted").execute()
+        friends=[row["receiver"] for row in response1.data]+[row["sender"]for row in response2.data]
+        return list(set(friends))
+    except Exception as e:
+        return []
+def get_realtionship_status(user1,user2):
+    try:
+        response=supabase.table("friend request").select("*").or_(
+            f"and(sender.eq.{user1},receiver.eq.{user2}), and(sender.eq.{user2},receiver.eq.{user1}) "
+            ).execute()
+        if not response.data:
+            return "None",None
+        req=response.data[0]
+        if req["status"]=="accepted":
+            return "friends",req["id"]
+        elif req["status"]=="pending":
+            if req["sender"]==user1:
+                return "sent",req["id"]
+            else:
+                return "receiver",req["id"]
+        return "None",None
+    except Exception as e:
+        return "None",None 
 def verify_login(username, password):
 
     try:
@@ -520,56 +569,7 @@ def settings():
 
         st.success("Settings saved ✅ successfully")
 
-def send_friend_requests(sender,receiver):
-    try:
-        supabase.table("friend_requests").insert({
-            "sender":sender,
-            "receiver":receiver,
-            "status":"pending"
-            }).execute()
-        return True,"Friend request sent"
-    except Exception as e:
-        return False,f"Failed to send request {e}"
-def responded_to_friend_request(request_id,new_status):
-    try:
-        supabase.table("friend_requests").update({
-            "status":new_status
-            }).eq("id",request_id).execute()
-        return True
-    except Exception:
-        return False
-def get_pending_request(username):
-    try:
-        response=supabase.table("friend_requests").select("*").eq("receiver",username).eq("status","pending").execute()
-        return response.data
-    except Exception as e:
-        return []
-def get_friend_list(username):
-    try:
-        response1=supabase.table("friend_request").select("receiver").eq("sender",username).eq("status","accepted").execute()
-        response2=supabase.table("friend_request").select("sender").eq("receiver",username).eq("status","accepted").execute()
-        friends=[row["receiver"] for row in response1.data]+[row["sender"]for row in response2.data]
-        return list(set(friends))
-    except Exception as e:
-        return []
-def get_realtionship_status(user1,user2):
-    try:
-        response=supabase.table("friend request").select("*").or_(
-            f"and(sender.eq.{user1},receiver.eq.{user2}), and(sender.eq.{user2},receiver.eq.{user1}) "
-            ).execute()
-        if not response.data:
-            return "None",None
-        req=response.data[0]
-        if req["status"]=="accepted":
-            return "friends",req["id"]
-        elif req["status"]=="pending":
-            if req["sender"]==user1:
-                return "sent",req["id"]
-            else:
-                return "receiver",req["id"]
-        return "None",None
-    except Exception as e:
-        return "None",None
+
 
 #---------- SESSION STATE INITIALIZATION ----------
 
