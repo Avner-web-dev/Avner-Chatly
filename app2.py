@@ -432,39 +432,67 @@ def stories():
             st.success("Story posted successfully")
 
             st.rerun()
- 
+
 def contacts():
-
-    st.header("👥 Contacts")
-
-    st.caption("People you can connect with")
-
+    st.header("👥 Friends & Requests")
+    st.caption("Manage your contacts and incoming friend requests")
     st.divider()
  
+    current_user = st.session_state.username
+ 
+    # ---------------- 1. INCOMING FRIEND REQUESTS ----------------
+    pending_reqs = get_pending_requests(current_user)
+    if pending_reqs:
+        st.subheader("📩 Incoming Requests")
+        for req in pending_reqs:
+            col1, col2, col3 = st.columns([3, 1.5, 1.5], vertical_alignment="center")
+            with col1:
+                st.markdown(f"<b>{escape(req['sender'])}</b> wants to connect.", unsafe_allow_html=True)
+            with col2:
+                if st.button("Accept", key=f"acc_{req['id']}", type="primary", use_container_width=True):
+                    respond_to_friend_request(req["id"], "accepted")
+                    st.success("Request accepted!")
+                    st.rerun()
+            with col3:
+                if st.button("Decline", key=f"dec_{req['id']}", use_container_width=True):
+                    respond_to_friend_request(req["id"], "rejected")
+                    st.rerun()
+        st.divider()
+ 
+    # ---------------- 2. FIND & ADD NEW FRIENDS ----------------
+    st.subheader("🔍 Find People")
+    search_term = st.text_input("Search registered users", placeholder="Type username...", label_visibility="collapsed")
     all_users = get_all_users()
-
-    other_users = [u for u in all_users if u != st.session_state.username]
+    other_users = [u for u in all_users if u != current_user]
  
     for name in other_users:
-
-        col1, col2, col3 = st.columns([1, 5, 2], vertical_alignment="center")
-
-        with col1:
-
-            st.markdown('<div class="avatar">👤</div>', unsafe_allow_html=True)
-
-        with col2:
-
-            st.markdown(f'<b>{escape(name)}</b><br><small style="color:#869a0;">Online</small>', unsafe_allow_html=True)
-
-        with col3:
-
-            if st.button("💬 Chat", key=f"chat_{name}", use_container_width=True):
-
-                st.session_state.selected_user = name
-
-                st.rerun()
+        if search_term and search_term.lower() not in name.lower():
+            continue
  
+        rel_status, req_id = get_relationship_status(current_user, name)
+        online_status, color = check_user_status(name)
+ 
+        col1, col2, col3 = st.columns([1, 4, 2.5], vertical_alignment="center")
+        with col1:
+            st.markdown('<div class="avatar">👤</div>', unsafe_allow_html=True)
+        with col2:
+            st.markdown(f'<b>{escape(name)}</b><br><small style="color:{color};">● {online_status}</small>', unsafe_allow_html=True)
+        with col3:
+            if rel_status == "friends":
+                if st.button("💬 Chat", key=f"chat_contact_{name}", use_container_width=True):
+                    st.session_state.selected_user = name
+                    st.rerun()
+            elif rel_status == "sent":
+                st.button("Request Sent", key=f"sent_{name}", disabled=True, use_container_width=True)
+            elif rel_status == "received":
+                if st.button("Accept Req", key=f"accept_inline_{req_id}", type="primary", use_container_width=True):
+                    respond_to_friend_request(req_id, "accepted")
+                    st.rerun()
+            else:
+                if st.button("➕ Add Friend", key=f"add_{name}", use_container_width=True):
+                    send_friend_request(current_user, name)
+                    st.rerun()
+
 def settings():
 
     st.header("⚙️ Settings")
