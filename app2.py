@@ -35,6 +35,34 @@ def send_friend_requests(sender,receiver):
         return True,"Friend request sent"
     except Exception as e:
         return False,f"Failed to send request {e}"
+from dateutil import parser  # Assuming dateutil is used for parser.isoparse
+
+def check_user_status(username: str) -> tuple[str, str]:
+  """Checks if a user is online or offline based on their last_seen timestamp.
+
+  Returns a tuple of (status_text, status_color).
+  """
+  try:
+    response = (
+        supabase.table("users")
+        .select("last_seen")
+        .eq("username", username)
+        .execute()
+    )
+
+    if response.data and response.data[0].get("last_seen"):
+      last_seen_str = response.data[0]["last_seen"]
+      last_seen_time = parser.isoparse(last_seen_str)
+      now = datetime.now(timezone.utc)
+
+      diff_seconds = (now - last_seen_time).total_seconds()
+      if diff_seconds < 25:
+        return "Online", "green"
+
+    return "Offline", "gray"
+  except Exception:
+    return "Offline", "gray"
+   
 def responded_to_friend_request(request_id,new_status):
     try:
         supabase.table("friend_requests").update({
