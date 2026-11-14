@@ -346,7 +346,7 @@ def chat_list():
 
     # Only show accepted friends
 
-    my_friends = get_friends_list(st.session_state.username)
+    my_friends = get_friend_list(st.session_state.username)
 
     if not my_friends:
 
