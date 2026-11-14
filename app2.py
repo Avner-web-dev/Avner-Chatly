@@ -25,7 +25,7 @@ supabase = init_supabase()
 st.set_page_config(page_title="Chatly", layout="centered")
  
 #---------- SUPABASE HELPER FUNCTIONS (Placed at the top) ----------
-def send_friend_requests(sender,receiver):
+def send_friend_request(sender,receiver):
     try:
         supabase.table("friend_requests").insert({
             "sender":sender,
