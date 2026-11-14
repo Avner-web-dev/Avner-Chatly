@@ -64,7 +64,7 @@ def check_user_status(username: str) -> tuple[str, str]:
   except Exception:
     return "Offline", "gray"
    
-def responded_to_friend_request(request_id,new_status):
+def respond_to_friend_request(request_id,new_status):
     try:
         supabase.table("friend_requests").update({
             "status":new_status
