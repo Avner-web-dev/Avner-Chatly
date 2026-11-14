@@ -34,6 +34,7 @@ def send_friend_request(sender,receiver):
             }).execute()
         return True,"Friend request sent"
     except Exception as e:
+        st.error(f"Error:{e}")
         return False,f"Failed to send request {e}"
 from dateutil import parser  # Assuming dateutil is used for parser.isoparse
 
@@ -574,8 +575,9 @@ def contacts():
                     st.rerun()
             else:
                 if st.button("➕ Add Friend", key=f"add_{name}", use_container_width=True):
-                    send_friend_request(current_user, name)
-                    st.rerun()
+                    success,msg=send_friend_request(current_user, name)
+                    if success:
+                         st.rerun()
 
 def settings():
 
