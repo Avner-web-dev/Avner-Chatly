@@ -51,15 +51,15 @@ def get_pending_request(username):
         return []
 def get_friend_list(username):
     try:
-        response1=supabase.table("friend_request").select("receiver").eq("sender",username).eq("status","accepted").execute()
-        response2=supabase.table("friend_request").select("sender").eq("receiver",username).eq("status","accepted").execute()
+        response1=supabase.table("friend_requests").select("receiver").eq("sender",username).eq("status","accepted").execute()
+        response2=supabase.table("friend_requests").select("sender").eq("receiver",username).eq("status","accepted").execute()
         friends=[row["receiver"] for row in response1.data]+[row["sender"]for row in response2.data]
         return list(set(friends))
     except Exception as e:
         return []
 def get_realtionship_status(user1,user2):
     try:
-        response=supabase.table("friend request").select("*").or_(
+        response=supabase.table("friend_requests").select("*").or_(
             f"and(sender.eq.{user1},receiver.eq.{user2}), and(sender.eq.{user2},receiver.eq.{user1}) "
             ).execute()
         if not response.data:
@@ -628,4 +628,3 @@ else:
     else:
 
         settings()
- 
