@@ -43,7 +43,7 @@ def responded_to_friend_request(request_id,new_status):
         return True
     except Exception:
         return False
-def get_pending_request(username):
+def get_pending_requests(username):
     try:
         response=supabase.table("friend_requests").select("*").eq("receiver",username).eq("status","pending").execute()
         return response.data
