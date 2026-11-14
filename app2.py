@@ -57,7 +57,7 @@ def get_friend_list(username):
         return list(set(friends))
     except Exception as e:
         return []
-def get_realtionship_status(user1,user2):
+def get_relationship_status(user1,user2):
     try:
         response=supabase.table("friend_requests").select("*").or_(
             f"and(sender.eq.{user1},receiver.eq.{user2}), and(sender.eq.{user2},receiver.eq.{user1}) "
