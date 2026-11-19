@@ -27,10 +27,10 @@ st.set_page_config(page_title="Chatly", layout="centered")
 #---------- SUPABASE HELPER FUNCTIONS (Placed at the top) ----------
 def send_friend_request(sender,receiver):
     try:
-        existing=(supabase.table("friends_request").select("id").eq("sender",sender).eq("receiver",receiver).execute())
+        existing=(supabase.table("friend_requests").select("id").eq("sender",sender).eq("receiver",receiver).execute())
         if existing.data:
             req_id=existing.data[0]["id"]
-            supabase.table("friends_request").update({"status":"pending"}).eq("id",req_id).execute()
+            supabase.table("friend_requests").update({"status":"pending"}).eq("id",req_id).execute()
             return True,"Friend request sent"
         supabase.table("friend_requests").insert({
             "sender":sender,
