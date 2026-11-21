@@ -454,12 +454,11 @@ def chat_window():
                     st.rerun()
 
     with col2:
-        if st.button("😎", key="emoji_button", use_container_width=True):
+        clicked_emoji=st.button("😎", key="emoji_button", use_container_width=True)
+        if clicked_emoji:
             current_user = st.session_state.get("username")
             recipient = st.session_state.get("selected_user")
-            if not current_user or not recipient:
-                st.warning("Select a friend")
-            else:
+            if current_user and recipient:
                 try:
                     supabase.table("messages").insert(
                         {
@@ -473,7 +472,6 @@ def chat_window():
                     st.rerun()
                 except Exception as e:
                     print(f"Emoji sent failed {e}")
-            st.info("Emoji button clicked")
 
     with col3:
         st.text_input(
