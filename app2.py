@@ -387,7 +387,9 @@ def chat_window():
     st_autorefresh(interval=3000, limit=None, key="chat_autorefresh")
     recipient = st.session_state.selected_user
     current_user = st.session_state.username
-
+    if st button("Clear Chat",key=f"clear_chat_{receipent}"):
+        if clear_chat_messages(current_user,receipent):
+            st.rerun()
     st.markdown(
         f'<div class="chat-header"><div class="chat-header-content"><div class="avatar">👤</div><div>'
         f'<div class="chat-username" style="color: white; font-weight: bold;">{escape(recipient)}</div>'
@@ -486,6 +488,18 @@ def chat_window():
             type="primary",
             on_click=send_message_callback,
         )
+
+def clear_chat_messages(user1,user2):
+    try:
+        (
+        supabase.table("messages").delete().or_(f"and(send.eq.{user2},receipent.eq.{user1})").execute()
+        )
+        return True
+    except Excpetion as E:
+        st.error(f"Falied to clear chat {E}")
+        return False
+
+
 def stories():
 
     st.header("📸 Stories")
