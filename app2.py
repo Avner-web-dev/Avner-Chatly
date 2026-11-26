@@ -387,7 +387,7 @@ def chat_window():
     st_autorefresh(interval=3000, limit=None, key="chat_autorefresh")
     recipient = st.session_state.selected_user
     current_user = st.session_state.username
-    if st button("Clear Chat",key=f"clear_chat_{receipent}"):
+    if st.button("Clear Chat",key=f"clear_chat_{receipent}"):
         if clear_chat_messages(current_user,receipent):
             st.rerun()
     st.markdown(
