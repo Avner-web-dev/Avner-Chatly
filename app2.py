@@ -306,30 +306,35 @@ def login_page():
                         st.error(msg)
  
 #---------- SIDEBAR & NAVIGATION ----------
-
 def sidebar():
-    st.sidebar.markdown('<h2>💬Chatly</h2>',unsafe_allow_html=True)
+    st.sidebar.markdown('<h2>💬 Chatly</h2>', unsafe_allow_html=True)
     st.sidebar.divider()
     st.sidebar.markdown(
-    f'''
-    <div class="profile-container">
-        <div class="avatar">👤</div>
-        <div>
-            <b>{escape(st.session_state.username)}</b>
-            <br>
-            <small style="color:green">● Online</small>
-            <br>
-            <small>👥 Friends: {len(get_friend_list(st.session_state.username))}</small>
+        f'''
+        <div class="profile-container">
+            <div class="avatar">👤</div>
+            <div>
+                <b>{escape(st.session_state.username)}</b>
+                <br>
+                <small style="color:green">● Online</small>
+                <br>
+                <small>👥 Friends: {len(get_friend_list(st.session_state.username))}</small>
+            </div>
         </div>
-    </div>
-    ''',unsafe_allow_html=True
+        ''',
+        unsafe_allow_html=True
     )
     st.sidebar.divider()
-    menu=st.sidebar.radio("Navigation",["💬Chats","📸 Stories", "👥 Contacts", "⚙️ Settings"],label_visibility="collapsed")
+    menu = st.sidebar.radio(
+        "Navigation",
+        ["💬 Chats", "📸 Stories", "👥 Contacts", "⚙️ Settings"],
+        label_visibility="collapsed"
+    )
     st.sidebar.divider()
-    if st.sidebar.button("🚪logout",use_container_width=True):
-        st.session_state.logged_in=False
-        st.session_state.username=""
+    if st.sidebar.button("🚪 Logout", use_container_width=True):
+        st.session_state.logged_in = False
+        st.session_state.username = ""
+        st.session_state.selected_user = ""
         st.rerun()
     return menu
  
