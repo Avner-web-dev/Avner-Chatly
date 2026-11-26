@@ -319,7 +319,7 @@ def sidebar():
             <br>
             <small style="color:green">● Online</small>
             <br>
-            <small>👥 Friends: {len(get_friends_list(st.session_state.username))}</small>
+            <small>👥 Friends: {len(get_friend_list(st.session_state.username))}</small>
         </div>
     </div>
     ''',unsafe_allow_html=True
